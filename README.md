@@ -47,7 +47,7 @@ Enable SSL:
     In the open file change "NameVirtualHost *" to "NameVirtualHost *:443"
     
     
-    Generate Certificate:
+Generate Certificate:
 
     $ sudo apt-get install ssl-cert
     $ sudo mkdir /etc/apache2/ssl

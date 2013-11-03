@@ -1,7 +1,8 @@
 svn-google-authn
 ================
 
-This document assumes install on a stock Ubuntu 12.04.3 instance with no prior installations
+This document assumes install on a stock Ubuntu 12.04.3 instance with no prior installations.
+It is also assumed that you're using a user with root priveleges.
 
 
 Connect to instance through shell or Putty if using Windows
@@ -18,7 +19,7 @@ Save and close the file
 
 Type the command below to change the machine name:
 
-    $ hostname myNewMachineName
+    $ sudo hostname myNewMachineName
     
 At this point the machine name has been changed.
 
@@ -71,6 +72,14 @@ Create Virtual Host:
 Enable the site:
 
     $ sudo a2ensite svnserver
+    $ sudo vi /etc/apache2/apache2.conf
+    
+    Add the following line to the open file, save, and close:
+    
+    ServerName localhost
+    
+Restart Apache:
+
     $ sudo /etc/init.d/apache2 restart
     
 Adding a repository:
@@ -110,11 +119,77 @@ Download and install Google Auth Apache Module:
     
     install: all
          sudo cp .libs/mod_authn_google.so /usr/lib/apache2/modules/
+         
+         
+    Replace mod_authn_google.c with the code from r21 on the project site here:
+    https://code.google.com/p/google-authenticator-apache-module/source/detail?r=21
+    (this is when true two-factor auth was added)
 
     $ sudo make install
 
-configure apache conf for SVN
-setup users
+Setup two factor auth in Apache:
+
+    $ cd /etc/apache2/
+    $ sudo mkdir two-factor 
+    $ sudo vi httpd.conf
+    
+    Add the following line the opened file, save, and close:
+    
+    Loadmodule authn_google_module /usr/lib/apache2/modules/mod_authn_google.so
+
+    $ sudo vi ports.conf
+    
+    In the open file change <VirtualHost *> to <VirtualHost *:443>
+
+    $ cd /etc/apache2/mods-available
+    $ sudo vi dav_svn.conf
+    
+    In the open file add the text below, save, and close:
+    
+    <Location /svn>
+        DAV svn 
+        SVNParentPath /var/svn
+        AuthType Basic
+        AuthName "Google Authenticator Code"
+        AuthBasicProvider "google_authenticator"
+        Require valid-user
+        GoogleAuthUserPath /etc/apache2/two-factor/
+        GoogleAuthCookieLife 3600
+        GoogleAuthEntryWindow 2
+        SSLRequireSSL
+    </Location>
+    
+Restart Apache:
+
+    $ sudo /etc/init.d/apache2 restart
+
+
+At this point SVN, Apache, and Google Authenticator are configured. Now users can be added.
+
+
+Adding Users:
+
+    First, users need to be added as a system user
+    $ sudo adduser firstName.lastName --force-badname
+    $ sudo su - firstName.LastName
+    # google-authenticator
+    
+    Google Authenticator will ask several quesitons. The proper response are y, y, y, n, y.
+    Copy the URL that is printed after answering the first question - this is the URL for the QR code
+    
+    # exit
+    $ cd /etc/apache2/two-factor
+    $ sudo cp /home/firstName.lastName/.google_authenticator firstName.lastName
+    $ sudo chown -R :www-data /etc/apache2/two-factor/  
+    $ sudo chmod g+r firstName.lastName
+    $ sudo vi firstName.lastName
+    
+    Modify the opened file to include a line similar to the below line, save, and close:
+    
+    " PASSWORD=myTestPassword
+
+
+Everything should now be configured. To login, browse to the URL and use the username, and password + 6 character Google Authenticator code.
 
     
     

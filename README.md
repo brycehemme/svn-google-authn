@@ -25,7 +25,7 @@ At this point the machine name has been changed.
 -----------------------------
 -----------------------------
 
-Install updates and C/C++ compiler:
+Install updates and C/C++ compiler and other tools:
 
     $ sudo apt-get update
     $ sudo apt-get upgrade
@@ -73,7 +73,54 @@ Enable the site:
     $ sudo a2ensite svnserver
     $ sudo /etc/init.d/apache2 restart
     
-Adding Repositories:
+Adding a repository:
+
+    $ sudo mkdir /var/svn
+    $ REPOS=myFirstRepo
+    $ sudo svnadmin create /var/svn/$REPOS
+    $ sudo chown -R www-data:www-data /var/svn/$REPOS
+    $ sudo chmod -R g+ws /var/svn/$REPOS
+    
+    Repeat everything but mkdir /var/svn to create additional repositories
+    
+
+Install PAM and download and build Google Authenticator:
+
+    $ sudo apt-get install libpam0g-dev
+    $ cd ~
+    $ sudo wget http://google-authenticator.googlecode.com/files/libpam-google-authenticator-1.0-source.tar.bz2
+    $ sudo tar -jxf libpam-google*
+    $ cd libpam-google*
+    $ sudo make install
+    
+    
+Download and install Google Auth Apache Module:
+
+    $ wget https://google-authenticator-apache-module.googlecode.com/files/GoogleAuthApache.src.r10.bz2
+    $ sudo tar -jxf GoogleAuthApache.src.r10.bz2 
+    $ cd google-authenticator*
+    $ sudo apt-get install apache2-prefork-dev
+    $ sudo vi Makefile
+    
+    in the opened file, change line 1 to:
+    
+    APXS=apxs2
+    
+    then change line 7 to point to the location to install and save and close the file:
+    
+    install: all
+         sudo cp .libs/mod_authn_google.so /usr/lib/apache2/modules/
+
+    $ sudo make install
+
+configure apache conf for SVN
+setup users
+
+    
+    
+
+    
+    
 
 
 

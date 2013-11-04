@@ -1,13 +1,18 @@
 svn-google-authn
 ================
 
+This document is intended as a tutorial to setup SVN using two-factor authentication
+with Apache and Google Authenticator
+
+
 This document assumes install on a stock Ubuntu 12.04.3 instance with no prior installations.
 It is also assumed that you're using a user with root priveleges.
 
 
-Connect to instance through shell or Putty if using Windows
+Machine Configuration
+=====================
 
-Change the hostname of the server to the appropriate name:
+Change the hostname of the server to the appropriate name so it displays as desired in Google Authenticator clients:
 
     $ sudo vi /etc/hosts
 
@@ -23,8 +28,7 @@ Type the command below to change the machine name:
     
 At this point the machine name has been changed.
 
------------------------------
------------------------------
+
 
 Install updates and C/C++ compiler and other tools:
 
@@ -32,10 +36,10 @@ Install updates and C/C++ compiler and other tools:
     $ sudo apt-get upgrade
     $ sudo apt-get install build-essential
     
------------------------------
------------------------------
 
-Install SubVersion and Apache:
+
+Install Subversion and Apache:
+====================
 
     $ sudo apt-get install subversion
     $ sudo apt-get install libapache2-svn apache2
@@ -82,7 +86,8 @@ Restart Apache:
 
     $ sudo /etc/init.d/apache2 restart
     
-Adding a repository:
+Adding a repository to SVN 
+===================
 
     $ sudo mkdir /var/svn
     $ REPOS=myFirstRepo
@@ -93,6 +98,9 @@ Adding a repository:
     Repeat everything but mkdir /var/svn to create additional repositories
     
 
+Google Authenticator
+=======================
+
 Install PAM and download and build Google Authenticator:
 
     $ sudo apt-get install libpam0g-dev
@@ -102,7 +110,11 @@ Install PAM and download and build Google Authenticator:
     $ cd libpam-google*
     $ sudo make install
     
-    
+
+
+Google Auth Apache Module
+=========================
+
 Download and install Google Auth Apache Module:
 
     $ wget https://google-authenticator-apache-module.googlecode.com/files/GoogleAuthApache.src.r10.bz2
@@ -167,7 +179,8 @@ Restart Apache:
 At this point SVN, Apache, and Google Authenticator are configured. Now users can be added.
 
 
-Adding Users:
+Adding Users
+===============
 
     First, users need to be added as a system user
     $ sudo adduser firstName.lastName --force-badname

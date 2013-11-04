@@ -182,7 +182,7 @@ At this point SVN, Apache, and Google Authenticator are configured. Now users ca
 Adding Users
 ===============
 
-    First, users need to be added as a system user
+    First, users need to be added as a system user so they show up appropriately in the Google Auth client
     $ sudo adduser firstName.lastName --force-badname
     $ sudo su - firstName.LastName
     # google-authenticator

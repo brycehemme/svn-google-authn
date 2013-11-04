@@ -2,7 +2,7 @@ svn-google-authn
 ================
 
 This document is intended as a tutorial to setup SVN using two-factor authentication
-with Apache and Google Authenticator
+with Apache and Google Authenticator.
 
 
 This document assumes install on a stock Ubuntu 12.04.3 instance with no prior installations.
@@ -187,7 +187,7 @@ Adding Users
     $ sudo su - firstName.LastName
     # google-authenticator
     
-    Google Authenticator will ask several quesitons. The proper response are y, y, y, n, y.
+    Google Authenticator will ask several quesitons. The proper response are y, y, y, n, y for security reasons. These should be reviewed based on the environment this is being deployed to.
     Copy the URL that is printed after answering the first question - this is the URL for the QR code
     
     # exit
